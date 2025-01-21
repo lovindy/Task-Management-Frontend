@@ -1,66 +1,69 @@
 <template>
-  <v-container>
-    <v-row justify="center" align="center" style="height: 80vh">
-      <v-col cols="12" sm="8" md="6" lg="4">
-        <v-card class="elevation-12">
-          <v-card-title class="text-h5 text-center pt-6">
+  <el-container class="centered-container">
+    <el-row justify="center" align="middle" class="full-height">
+      <el-col :span="8">
+        <el-card class="elevation-12">
+          <div slot="header" class="text-center">
             <h2>Create Account</h2>
-          </v-card-title>
+          </div>
 
-          <v-card-text>
-            <v-form @submit.prevent="handleSubmit" class="mt-4">
-              <v-text-field
+          <el-form
+            :model="formData"
+            @submit.native.prevent="handleSubmit"
+            label-width="0"
+          >
+            <el-form-item prop="username">
+              <el-input
                 v-model="formData.username"
-                prepend-icon="mdi-account"
-                label="Username"
-                type="text"
-                variant="outlined"
-                required
-              ></v-text-field>
+                prefix-icon="el-icon-user"
+                placeholder="Username"
+              />
+            </el-form-item>
 
-              <v-text-field
+            <el-form-item prop="password">
+              <el-input
                 v-model="formData.password"
-                prepend-icon="mdi-lock"
-                label="Password"
+                prefix-icon="el-icon-lock"
+                placeholder="Password"
+                show-password
                 type="password"
-                variant="outlined"
-                required
-              ></v-text-field>
+              />
+            </el-form-item>
 
-              <v-text-field
+            <el-form-item prop="confirmPassword">
+              <el-input
                 v-model="formData.confirmPassword"
-                prepend-icon="mdi-lock-check"
-                label="Confirm Password"
+                prefix-icon="el-icon-lock"
+                placeholder="Confirm Password"
+                show-password
                 type="password"
-                variant="outlined"
-                required
-              ></v-text-field>
+              />
+            </el-form-item>
 
-              <v-btn
-                type="submit"
-                color="primary"
-                size="large"
-                block
-                class="mt-4"
-                :loading="loading"
+            <el-button
+              type="primary"
+              size="large"
+              class="mt-4"
+              :loading="loading"
+              block
+              @click="handleSubmit"
+            >
+              Register
+            </el-button>
+          </el-form>
+
+          <el-row justify="center" class="mt-4">
+            <el-col class="text-center">
+              Already have an account?
+              <router-link to="/login" class="text-primary"
+                >Login here</router-link
               >
-                Register
-              </v-btn>
-            </v-form>
-
-            <v-row class="mt-4">
-              <v-col class="text-center">
-                Already have an account?
-                <router-link to="/login" class="text-decoration-none">
-                  Login here
-                </router-link>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+            </el-col>
+          </el-row>
+        </el-card>
+      </el-col>
+    </el-row>
+  </el-container>
 </template>
 
 <script setup lang="ts">
@@ -79,7 +82,7 @@ const formData = reactive({
 const handleSubmit = async () => {
   loading.value = true;
   try {
-    // API call here
+    // Simulated API call
     await new Promise((resolve) => setTimeout(resolve, 1000));
     router.push("/login");
   } catch (error) {
@@ -89,3 +92,19 @@ const handleSubmit = async () => {
   }
 };
 </script>
+
+<style scoped>
+.centered-container {
+  height: 100vh;
+}
+.full-height {
+  height: 100%;
+}
+.text-primary {
+  color: #409eff;
+  text-decoration: none;
+}
+.text-primary:hover {
+  text-decoration: underline;
+}
+</style>

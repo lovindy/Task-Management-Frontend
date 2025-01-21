@@ -1,93 +1,113 @@
 <template>
-    <v-container>
-      <v-row justify="center" align="center" style="height: 80vh">
-        <v-col cols="12" sm="8" md="6" lg="4">
-          <v-card class="elevation-12">
-            <v-card-title class="text-h5 text-center pt-6">
-              <h2>Welcome Back</h2>
-            </v-card-title>
-  
-            <v-card-text>
-              <v-alert v-if="error" type="error" variant="tonal" class="mb-4">
-                {{ error }}
-              </v-alert>
-  
-              <v-form @submit.prevent="handleSubmit" class="mt-4">
-                <v-text-field
-                  v-model="credentials.username"
-                  prepend-icon="mdi-account"
-                  label="Username"
-                  type="text"
-                  variant="outlined"
-                  required
-                  :disabled="loading"
-                ></v-text-field>
-  
-                <v-text-field
-                  v-model="credentials.password"
-                  prepend-icon="mdi-lock"
-                  label="Password"
-                  type="password"
-                  variant="outlined"
-                  required
-                  :disabled="loading"
-                ></v-text-field>
-  
-                <v-btn
-                  type="submit"
-                  color="primary"
-                  size="large"
-                  block
-                  class="mt-4"
-                  :loading="loading"
-                >
-                  Sign In
-                </v-btn>
-              </v-form>
-  
-              <v-row class="mt-4">
-                <v-col class="text-center">
-                  Don't have an account?
-                  <router-link to="/register" class="text-decoration-none">
-                    Register here
-                  </router-link>
-                </v-col>
-              </v-row>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
-  </template>
-  
-  <script setup lang="ts">
-  import { ref, reactive } from "vue";
-  import { useRouter } from "vue-router";
-  import { useAuthStore } from "../stores/auth.store";
-  
-  const router = useRouter();
-  const authStore = useAuthStore();
-  const loading = ref(false);
-  const error = ref("");
-  
-  const credentials = reactive({
-    username: "",
-    password: "",
-  });
-  
-  const handleSubmit = async () => {
-    loading.value = true;
-    error.value = "";
-  
-    try {
-      await authStore.login(credentials);
-      router.push("/");
-    } catch (err: any) {
-      error.value =
-        err.response?.data?.message || "Login failed. Please try again.";
-      console.error("Login failed:", err);
-    } finally {
-      loading.value = false;
-    }
-  };
-  </script>
+  <el-container class="centered-container">
+    <el-row justify="center" align="middle" class="full-height">
+      <el-col :span="8">
+        <el-card class="elevation-12">
+          <div slot="header" class="text-center">
+            <h2>Welcome Back</h2>
+          </div>
+
+          <div v-if="error" class="mb-4">
+            <el-alert type="error" show-icon :closable="false">
+              {{ error }}
+            </el-alert>
+          </div>
+
+          <el-form
+            :model="credentials"
+            @submit.native.prevent="handleSubmit"
+            label-width="0"
+          >
+            <el-form-item prop="username">
+              <el-input
+                v-model="credentials.username"
+                prefix-icon="el-icon-user"
+                placeholder="Username"
+                :disabled="loading"
+              />
+            </el-form-item>
+
+            <el-form-item prop="password">
+              <el-input
+                v-model="credentials.password"
+                prefix-icon="el-icon-lock"
+                placeholder="Password"
+                type="password"
+                show-password
+                :disabled="loading"
+              />
+            </el-form-item>
+
+            <el-button
+              type="primary"
+              size="large"
+              class="mt-4"
+              :loading="loading"
+              block
+              @click="handleSubmit"
+            >
+              Sign In
+            </el-button>
+          </el-form>
+
+          <el-row justify="center" class="mt-4">
+            <el-col class="text-center">
+              Don't have an account?
+              <router-link to="/register" class="text-primary"
+                >Register here</router-link
+              >
+            </el-col>
+          </el-row>
+        </el-card>
+      </el-col>
+    </el-row>
+  </el-container>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "../stores/auth.store";
+
+const router = useRouter();
+const authStore = useAuthStore();
+const loading = ref(false);
+const error = ref("");
+
+const credentials = reactive({
+  username: "",
+  password: "",
+});
+
+const handleSubmit = async () => {
+  loading.value = true;
+  error.value = "";
+
+  try {
+    await authStore.login(credentials);
+    router.push("/");
+  } catch (err: any) {
+    error.value =
+      err.response?.data?.message || "Login failed. Please try again.";
+    console.error("Login failed:", err);
+  } finally {
+    loading.value = false;
+  }
+};
+</script>
+
+<style scoped>
+.centered-container {
+  height: 100vh;
+}
+.full-height {
+  height: 100%;
+}
+.text-primary {
+  color: #409eff;
+  text-decoration: none;
+}
+.text-primary:hover {
+  text-decoration: underline;
+}
+</style>
