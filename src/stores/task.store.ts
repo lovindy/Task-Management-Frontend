@@ -24,9 +24,26 @@ export const useTaskStore = defineStore("task", {
 
     async updateTaskPosition(
       taskId: string,
-      updatePositionDto: UpdateTaskPositionDto
+      listId: string,
+      newPosition: number
     ) {
-      await api.put(`/task/${taskId}/position`, updatePositionDto);
+      console.log("UpdateTaskPosition params:", {
+        taskId,
+        listId,
+        newPosition,
+      });
+      try {
+        const response = await api.put(
+          `/task/${taskId}/position?listId=${listId}`,
+          {
+            position: newPosition,
+          }
+        );
+        return response.data;
+      } catch (error) {
+        console.error("API Error:", error);
+        throw error;
+      }
     },
 
     async deleteTask(taskId: string) {

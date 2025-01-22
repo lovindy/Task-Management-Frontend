@@ -312,19 +312,29 @@ const handleListDragChange = async (event: any) => {
   }
 };
 
-const handleTaskDragChange = async (event: any, listId: string) => {
-  if (event.added) {
-    const { element: task, newIndex } = event.added;
-    await taskStore.updateTaskPosition(task.taskId, {
-      listId,
-      position: newIndex,
-    });
-  } else if (event.moved) {
-    const { element: task, newIndex } = event.moved;
-    await taskStore.updateTaskPosition(task.taskId, {
-      listId,
-      position: newIndex,
-    });
+const handleTaskDragChange = async (event: DragEvent, listId: string) => {
+  // Store the original lists state for rollback if needed
+  const originalLists = JSON.parse(JSON.stringify(lists.value));
+
+  try {
+    if (event.added) {
+      const { element: task, newIndex } = event.added;
+      await taskStore.updateTaskPosition(task.taskId, listId, newIndex);
+    } else if (event.moved) {
+      const { element: task, newIndex } = event.moved;
+      await taskStore.updateTaskPosition(task.taskId, listId, newIndex);
+    }
+  } catch (error) {
+    console.error("Failed to update task position:", error);
+    // Rollback to previous state
+    lists.value = originalLists;
+    // Show error message to user
+    ElMessage.error("Failed to update task position");
+  } finally {
+    // Refresh board data to ensure UI is in sync with backend
+    if (currentBoard.value) {
+      await fetchBoardData(currentBoard.value.boardId);
+    }
   }
 };
 
