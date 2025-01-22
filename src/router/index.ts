@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/auth.store";
 import LoginView from "@/views/LoginView.vue";
 import RegisterView from "@/views/RegisterView.vue";
-import DashboardView from "@/views/DashboardView.vue";
+// import DashboardView from "@/views/DashboardView.vue";
 import BoardView from "@/views/BoardView.vue";
 import AppLayout from "@/layouts/AppLayout.vue";
 
@@ -28,11 +28,6 @@ const router = createRouter({
       component: AppLayout,
       meta: { requiresAuth: true },
       children: [
-        {
-          path: "",
-          name: "dashboard",
-          component: DashboardView,
-        },
         {
           path: "boards/:boardId",
           name: "board",

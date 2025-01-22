@@ -5,24 +5,7 @@
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center space-x-4">
         <h1 class="text-2xl font-bold">{{ currentBoard?.title || "Board" }}</h1>
-        <div class="flex items-center space-x-2">
-          <el-button type="primary" size="small" @click="handleShare">
-            <el-icon><Share /></el-icon>
-            Share
-          </el-button>
-        </div>
-      </div>
-      <div class="flex items-center space-x-4">
-        <el-button-group>
-          <el-button type="primary" plain>
-            <el-icon><Grid /></el-icon>
-            Board
-          </el-button>
-          <el-button plain>
-            <el-icon><List /></el-icon>
-            Table
-          </el-button>
-        </el-button-group>
+        <div class="flex items-center space-x-2"></div>
       </div>
     </div>
 
@@ -39,66 +22,60 @@
         @change="handleListDragChange"
       >
         <template #item="{ element: list }">
-          <!-- List Column -->
-          <div class="w-72 flex-shrink-0">
-            <div class="bg-gray-100 rounded-lg p-4">
-              <!-- List Header -->
-              <div class="flex items-center justify-between mb-4">
-                <h3 class="font-semibold">{{ list.title }}</h3>
-                <el-dropdown trigger="click">
-                  <el-button type="text">
-                    <el-icon><More /></el-icon>
-                  </el-button>
-                  <template #dropdown>
-                    <el-dropdown-menu>
-                      <el-dropdown-item @click="handleEditList(list)"
-                        >Edit</el-dropdown-item
-                      >
-                      <el-dropdown-item
-                        @click="handleDeleteList(list.listId)"
-                        class="text-red-500"
-                        >Delete</el-dropdown-item
-                      >
-                    </el-dropdown-menu>
-                  </template>
-                </el-dropdown>
-              </div>
-
-              <!-- Tasks -->
-              <Draggable
-                v-model="list.tasks"
-                group="tasks"
-                item-key="taskId"
-                class="space-y-2"
-                @change="(event) => handleTaskDragChange(event, list.listId)"
-              >
-                <template #item="{ element: task }">
-                  <div
-                    class="bg-white rounded p-3 shadow-sm cursor-pointer hover:bg-gray-50"
-                    @click="handleEditTask(task)"
-                  >
-                    <p class="text-sm">{{ task.title }}</p>
-                    <p
-                      v-if="task.description"
-                      class="text-xs text-gray-500 mt-1"
-                    >
-                      {{ task.description }}
-                    </p>
-                  </div>
-                </template>
-              </Draggable>
-
-              <!-- Add Task Button -->
-              <div class="mt-3">
-                <el-button
-                  type="text"
-                  class="w-full text-left hover:bg-gray-200"
-                  @click="handleAddTask(list.listId)"
-                >
-                  <el-icon><Plus /></el-icon>
-                  Add a card
+          <div class="w-72 flex-shrink-0 bg-gray-100 rounded-lg p-4">
+            <!-- List Header -->
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-semibold">{{ list.title }}</h3>
+              <el-dropdown trigger="click">
+                <el-button type="text">
+                  <el-icon><More /></el-icon>
                 </el-button>
-              </div>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item @click="handleEditList(list)"
+                      >Edit</el-dropdown-item
+                    >
+                    <el-dropdown-item
+                      @click="handleDeleteList(list.listId)"
+                      class="text-red-500"
+                      >Delete</el-dropdown-item
+                    >
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </div>
+
+            <!-- Tasks -->
+            <Draggable
+              v-model="list.tasks"
+              group="tasks"
+              item-key="taskId"
+              class="space-y-2"
+              @change="(event) => handleTaskDragChange(event, list.listId)"
+            >
+              <template #item="{ element: task }">
+                <div
+                  class="bg-white rounded p-3 shadow-sm cursor-pointer hover:bg-gray-50"
+                  @click="handleEditTask(task)"
+                >
+                  <p class="text-sm">{{ task.title }}</p>
+                  <p v-if="task.description" class="text-xs text-gray-500 mt-1">
+                    {{ task.description }}
+                  </p>
+                </div>
+              </template>
+            </Draggable>
+
+            <!-- Add Task Button -->
+            <div class="mt-3">
+              <el-button
+                type="text"
+                class="w-full text-left hover:bg-gray-200"
+                @click="handleAddTask(list.listId)"
+              >
+                <el-icon><Plus /></el-icon>
+                Add a card
+              </el-button>
             </div>
           </div>
         </template>
@@ -117,6 +94,7 @@
       </div>
     </div>
 
+    <!-- Dialogs remain the same -->
     <!-- Add/Edit List Dialog -->
     <el-dialog
       v-model="listDialog.visible"
@@ -163,7 +141,6 @@
     </el-dialog>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";

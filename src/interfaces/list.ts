@@ -13,3 +13,7 @@ export interface CreateListDto {
 export interface UpdateListTitleDto {
   title: string;
 }
+
+export interface UpdateListPositionDto {
+  position: number;
+}
