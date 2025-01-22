@@ -162,9 +162,6 @@ import {
   User,
   SwitchButton,
   ArrowDown,
-  Document,
-  Calendar,
-  Collection,
 } from "@element-plus/icons-vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { useBoardStore } from "@/stores/board.store";

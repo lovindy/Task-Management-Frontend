@@ -1,6 +1,5 @@
 <!-- views/BoardView.vue -->
 <template>
-  <h1>Dashboard</h1>
   <DashboardComponent />
 </template>
 
