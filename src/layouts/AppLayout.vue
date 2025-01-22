@@ -12,10 +12,7 @@
           <el-avatar :size="32" class="bg-teal-500">{{
             userInitials
           }}</el-avatar>
-          <div class="flex flex-col">
-            <span class="font-semibold text-sm">{{ user?.username }}</span>
-            <span class="text-xs text-blue-200">Premium</span>
-          </div>
+          <span class="font-semibold text-sm">{{ user?.username }}</span>
         </div>
       </div>
 
@@ -41,6 +38,27 @@
                 </el-button>
               </div>
             </template>
+
+            <!-- Modal for creating new board -->
+            <el-dialog
+              v-model="dialogVisible"
+              :modal="false"
+              v-for="board in boards"
+              :key="board.boardId"
+              :index="`/boards/${board.boardId}`"
+              @click="navigateTo(`/boards/${board.boardId}`)"
+            >
+              <span>It's a modal Dialog</span>
+              <!-- <template #footer>
+                <div class="dialog-footer">
+                  <el-button @click="dialogVisible = false">Cancel</el-button>
+                  <el-button type="primary" @click="dialogVisible = false">
+                    Confirm
+                  </el-button>
+                </div>
+              </template> -->
+            </el-dialog>
+
             <el-menu-item
               v-for="board in boards"
               :key="board.boardId"
@@ -117,9 +135,6 @@ import {
   User,
   SwitchButton,
   ArrowDown,
-  Folder,
-  Share,
-  Search,
   Document,
   Calendar,
   Collection,
@@ -136,16 +151,12 @@ const boardStore = useBoardStore();
 // State
 const boards = ref<Board[]>([]);
 const searchQuery = ref("");
+const dialogVisible = ref(false);
 
 // Navigation items
 const navigationItems = [
   { name: "Boards", path: "/boards", icon: Collection },
   { name: "Members", path: "/boardmembers", icon: User },
-];
-
-const workspaceViews = [
-  { name: "Table", path: "/workspace/table", icon: Document },
-  { name: "Calendar", path: "/workspace/calendar", icon: Calendar },
 ];
 
 // Computed
@@ -183,7 +194,7 @@ const generateBoardColor = (boardId: string) => {
 
 const handleCreateBoard = (e: Event) => {
   e.stopPropagation();
-  router.push("/boards/create");
+  dialogVisible.value = true;
 };
 
 const handleProfile = () => router.push("/profile");
