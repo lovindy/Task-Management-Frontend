@@ -1,3 +1,13 @@
+export interface Task {
+  taskId: string;
+  title: string;
+  description?: string;
+  dueDate?: string;
+  listId: string;
+  position: number;
+  completed: boolean;
+}
+
 export interface CreateTaskDto {
   title: string;
   description?: string;
@@ -14,5 +24,6 @@ export interface UpdateTaskDto {
 }
 
 export interface UpdateTaskPositionDto {
-  newPosition: number;
+  listId: string;
+  position: number;
 }

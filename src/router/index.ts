@@ -1,42 +1,15 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { useAuthStore } from "@/stores/auth.store.ts";
+import { useAuthStore } from "@/stores/auth.store";
 import LoginView from "@/views/LoginView.vue";
 import RegisterView from "@/views/RegisterView.vue";
+import DashboardView from "@/views/DashboardView.vue";
 import BoardView from "@/views/BoardView.vue";
 import AppLayout from "@/layouts/AppLayout.vue";
-import BoardMemberView from "@/views/BoardMemberView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    {
-      path: "/",
-      component: AppLayout,
-      children: [
-        {
-          path: "boards",
-          name: "boards",
-          component: BoardView,
-        },
-        {
-          path: "boards/:id",
-          name: "board",
-          component: BoardView,
-        },
-        // board member
-        {
-          path: "boardmembers",
-          name: "boardmembers",
-          component: BoardMemberView,
-        },
-      ],
-    },
-    {
-      path: "/board",
-      name: "board",
-      component: BoardView,
-      meta: { requiresAuth: true },
-    },
+    // Auth routes
     {
       path: "/login",
       name: "login",
@@ -49,22 +22,38 @@ const router = createRouter({
       component: RegisterView,
       meta: { guest: true },
     },
+    // App routes
+    {
+      path: "/",
+      component: AppLayout,
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: "",
+          name: "dashboard",
+          component: DashboardView,
+        },
+        {
+          path: "boards/:boardId",
+          name: "board",
+          component: BoardView,
+          props: true,
+        },
+      ],
+    },
   ],
 });
 
-// Navigation guard
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
 
-  // Check authentication status before proceeding
+  // Check authentication status
   await authStore.checkAuth();
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    // Redirect to login if trying to access protected route while not authenticated
     next({ name: "login" });
   } else if (to.meta.guest && authStore.isAuthenticated) {
-    // Redirect to home if trying to access guest route while authenticated
-    next({ name: "home" });
+    next({ name: "dashboard" });
   } else {
     next();
   }

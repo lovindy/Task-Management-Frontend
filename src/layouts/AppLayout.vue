@@ -96,30 +96,6 @@
 
     <!-- Main Content Area -->
     <el-container class="bg-gray-100">
-      <el-header
-        class="bg-white border-b flex items-center justify-between px-6"
-      >
-        <div class="flex items-center space-x-4">
-          <h1 class="text-xl font-semibold">{{ currentPageTitle }}</h1>
-        </div>
-        <div class="flex items-center space-x-4">
-          <el-input
-            v-model="searchQuery"
-            placeholder="Search..."
-            prefix-icon="Search"
-            class="w-64"
-          />
-          <el-button-group>
-            <el-button type="primary" plain>
-              <el-icon><Plus /></el-icon>Create
-            </el-button>
-            <el-button type="primary" plain>
-              <el-icon><Share /></el-icon>Share
-            </el-button>
-          </el-button-group>
-        </div>
-      </el-header>
-
       <!-- Main Content -->
       <el-main class="p-6">
         <router-view v-slot="{ Component }">

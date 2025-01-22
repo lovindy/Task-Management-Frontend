@@ -1,4 +1,4 @@
-<!-- views/DashboardView.vue -->
+<!-- views/HomeView.vue -->
 <template>
   <AppLayout>
     <Dashboard />
@@ -6,6 +6,6 @@
 </template>
 
 <script setup lang="ts">
-import Dashboard from "@/components/Dashboard.vue";
+import Dashboard from "@/components/DashboardComponent.vue";
 import AppLayout from "@/layouts/AppLayout.vue";
 </script>
