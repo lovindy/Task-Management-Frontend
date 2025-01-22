@@ -1,113 +1,121 @@
+<!-- LoginView.vue -->
 <template>
-  <el-container class="centered-container">
-    <el-row justify="center" align="middle" class="full-height">
-      <el-col :span="8">
-        <el-card class="elevation-12">
-          <div slot="header" class="text-center">
-            <h2>Welcome Back</h2>
-          </div>
+  <div class="login-container">
+    <el-card class="login-card">
+      <template #header>
+        <h2>{{ isRegisterMode ? 'Register' : 'Login' }}</h2>
+      </template>
+      
+      <el-form 
+        :model="formData" 
+        :rules="rules"
+        ref="formRef"
+        label-position="top"
+      >
+        <el-form-item label="Username" prop="username">
+          <el-input 
+            v-model="formData.username"
+            placeholder="Enter username"
+          />
+        </el-form-item>
 
-          <div v-if="error" class="mb-4">
-            <el-alert type="error" show-icon :closable="false">
-              {{ error }}
-            </el-alert>
-          </div>
+        <el-form-item label="Password" prop="password">
+          <el-input 
+            v-model="formData.password"
+            type="password"
+            placeholder="Enter password"
+            show-password
+          />
+        </el-form-item>
 
-          <el-form
-            :model="credentials"
-            @submit.native.prevent="handleSubmit"
-            label-width="0"
+        <el-form-item>
+          <el-button 
+            type="primary" 
+            :loading="loading"
+            @click="handleSubmit"
+            class="w-full"
           >
-            <el-form-item prop="username">
-              <el-input
-                v-model="credentials.username"
-                prefix-icon="el-icon-user"
-                placeholder="Username"
-                :disabled="loading"
-              />
-            </el-form-item>
+            {{ isRegisterMode ? 'Register' : 'Login' }}
+          </el-button>
+        </el-form-item>
+      </el-form>
 
-            <el-form-item prop="password">
-              <el-input
-                v-model="credentials.password"
-                prefix-icon="el-icon-lock"
-                placeholder="Password"
-                type="password"
-                show-password
-                :disabled="loading"
-              />
-            </el-form-item>
-
-            <el-button
-              type="primary"
-              size="large"
-              class="mt-4"
-              :loading="loading"
-              block
-              @click="handleSubmit"
-            >
-              Sign In
-            </el-button>
-          </el-form>
-
-          <el-row justify="center" class="mt-4">
-            <el-col class="text-center">
-              Don't have an account?
-              <router-link to="/register" class="text-primary"
-                >Register here</router-link
-              >
-            </el-col>
-          </el-row>
-        </el-card>
-      </el-col>
-    </el-row>
-  </el-container>
+      <div class="text-center mt-4">
+        <el-button 
+          link 
+          type="primary" 
+          @click="isRegisterMode = !isRegisterMode"
+        >
+          {{ isRegisterMode ? 'Already have an account? Login' : 'Need an account? Register' }}
+        </el-button>
+      </div>
+    </el-card>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
-import { useRouter } from "vue-router";
-import { useAuthStore } from "../stores/auth.store";
+import { ref, reactive } from 'vue'
+import { useAuthStore } from '@/stores/auth.store'
+import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
-const authStore = useAuthStore();
-const loading = ref(false);
-const error = ref("");
+const router = useRouter()
+const authStore = useAuthStore()
+const formRef = ref()
+const loading = ref(false)
+const isRegisterMode = ref(false)
 
-const credentials = reactive({
-  username: "",
-  password: "",
-});
+const formData = reactive({
+  username: '',
+  password: ''
+})
+
+const rules = {
+  username: [
+    { required: true, message: 'Please input username', trigger: 'blur' },
+    { min: 3, message: 'Username must be at least 3 characters', trigger: 'blur' }
+  ],
+  password: [
+    { required: true, message: 'Please input password', trigger: 'blur' },
+    { min: 6, message: 'Password must be at least 6 characters', trigger: 'blur' }
+  ]
+}
 
 const handleSubmit = async () => {
-  loading.value = true;
-  error.value = "";
-
+  if (!formRef.value) return
+  
   try {
-    await authStore.login(credentials);
-    router.push("/");
-  } catch (err: any) {
-    error.value =
-      err.response?.data?.message || "Login failed. Please try again.";
-    console.error("Login failed:", err);
+    await formRef.value.validate()
+    loading.value = true
+    
+    if (isRegisterMode.value) {
+      await authStore.register(formData)
+      ElMessage.success('Registration successful')
+    } else {
+      await authStore.login(formData)
+      ElMessage.success('Login successful')
+    }
+    
+    router.push('/')
+  } catch (error: any) {
+    ElMessage.error(error.response?.data || 'An error occurred')
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 </script>
 
 <style scoped>
-.centered-container {
-  height: 100vh;
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f5f7fa;
 }
-.full-height {
-  height: 100%;
-}
-.text-primary {
-  color: #409eff;
-  text-decoration: none;
-}
-.text-primary:hover {
-  text-decoration: underline;
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
 }
 </style>

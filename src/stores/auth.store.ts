@@ -6,23 +6,36 @@ import type { LoginCredentials } from "../interfaces/types";
 
 export const useAuthStore = defineStore("auth", () => {
   const isAuthenticated = ref(false);
-  const user = ref<{ username: string } | null>(null);
+  const user = ref<{
+    userId: string;
+    username: string;
+    isActive: boolean;
+    createdAt: string;
+  } | null>(null);
   const isLoading = ref(true);
+
+  // Initialize the store
+  function init() {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      isAuthenticated.value = true;
+      checkAuth(); // Verify the token and get user data
+    } else {
+      isLoading.value = false;
+    }
+  }
 
   // Register user
   async function register(credentials: LoginCredentials) {
     try {
       console.log("Registering user with credentials:", credentials);
-      const response = await api.post("/auth/register", credentials);
+      const response = await api.post("/user/register", credentials);
+      user.value = response.data;
       isAuthenticated.value = true;
-      user.value = response.data.user;
       console.log("Registration successful:", response.data);
       return response.data;
     } catch (error) {
-      console.error(
-        "Registration failed:",
-        (error as any).response?.data || error
-      );
+      console.error("Registration failed:", (error as any).response?.data || error);
       isAuthenticated.value = false;
       user.value = null;
       throw error;
@@ -37,11 +50,12 @@ export const useAuthStore = defineStore("auth", () => {
 
       // Store token in localStorage
       localStorage.setItem("authToken", response.data.token);
-
-      isAuthenticated.value = true;
+      
+      // Set user data and authentication state
       user.value = response.data.user;
+      isAuthenticated.value = true;
+      
       console.log("Login successful:", response.data);
-
       return response.data;
     } catch (error) {
       console.error("Login failed:", (error as any).response?.data || error);
@@ -52,53 +66,42 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   // Logout user
-  async function logout() {
-    try {
-      console.log("Logging out...");
-      await api.post("/user/logout");
-      console.log("Logout successful.");
-    } catch (error) {
-      console.error("Logout failed:", (error as any).response?.data || error);
-    } finally {
-      isAuthenticated.value = false;
-      user.value = null;
-    }
+  function logout() {
+    localStorage.removeItem("authToken");
+    isAuthenticated.value = false;
+    user.value = null;
   }
 
   // Check authentication status
   async function checkAuth() {
-    if (!isLoading.value) return;
-
     isLoading.value = true;
 
     try {
       const token = localStorage.getItem("authToken");
 
       if (!token) {
-        throw new Error("No token found.");
+        throw new Error("No token found");
       }
 
-      const response = await api.get("/user/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.status === 200 && response.data.isAuthenticated) {
-        console.log("Authenticated user:", response.data.username);
-        isAuthenticated.value = true;
-        user.value = { username: response.data.username }; // Update user data
-      } else {
-        throw new Error("Authentication check failed.");
-      }
+      const response = await api.get("/user/me");
+      
+      // Update user data from the response
+      user.value = response.data;
+      isAuthenticated.value = true;
+      
+      console.log("Authentication check successful:", response.data);
     } catch (error) {
-      console.error("Failed to authenticate:", (error as any).message);
+      console.error("Authentication check failed:", error);
+      localStorage.removeItem("authToken"); // Clear invalid token
       isAuthenticated.value = false;
       user.value = null;
     } finally {
       isLoading.value = false;
     }
   }
+
+  // Initialize the store when it's created
+  init();
 
   return {
     isLoading,
