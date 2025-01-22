@@ -152,6 +152,7 @@ import type { Task } from "@/interfaces/task";
 import { useBoardStore } from "@/stores/board.store";
 import { useListStore } from "@/stores/list.store";
 import { useTaskStore } from "@/stores/task.store";
+import { ElMessage } from "element-plus";
 
 const route = useRoute();
 const boardStore = useBoardStore();
@@ -312,7 +313,7 @@ const handleListDragChange = async (event: any) => {
   }
 };
 
-const handleTaskDragChange = async (event: DragEvent, listId: string) => {
+const handleTaskDragChange = async (event: any, listId: string) => {
   // Store the original lists state for rollback if needed
   const originalLists = JSON.parse(JSON.stringify(lists.value));
 
