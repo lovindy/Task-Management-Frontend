@@ -27,34 +27,6 @@
           text-color="black"
           active-text-color="black"
         >
-          <!-- Main Navigation -->
-          <el-menu-item
-            v-for="item in navigationItems"
-            :key="item.path"
-            :index="item.path"
-            @click="navigateTo(item.path)"
-          >
-            <el-icon><component :is="item.icon" /></el-icon>
-            <span>{{ item.name }}</span>
-          </el-menu-item>
-
-          <!-- Workspace Section -->
-          <el-sub-menu index="workspace">
-            <template #title>
-              <el-icon><Folder /></el-icon>
-              <span>Workspace</span>
-            </template>
-            <el-menu-item
-              v-for="view in workspaceViews"
-              :key="view.path"
-              :index="view.path"
-              @click="navigateTo(view.path)"
-            >
-              <el-icon><component :is="view.icon" /></el-icon>
-              <span>{{ view.name }}</span>
-            </el-menu-item>
-          </el-sub-menu>
-
           <!-- Boards Section -->
           <el-sub-menu index="boards">
             <template #title>
@@ -192,7 +164,7 @@ const searchQuery = ref("");
 // Navigation items
 const navigationItems = [
   { name: "Boards", path: "/boards", icon: Collection },
-  { name: "Members", path: "/members", icon: User },
+  { name: "Members", path: "/boardmembers", icon: User },
 ];
 
 const workspaceViews = [
