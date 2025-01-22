@@ -1,154 +1,125 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-500 to-blue-400 p-6">
+  <div class="min-h-screen bg-blue-500 p-6">
     <!-- Board Header -->
     <div class="flex items-center justify-between mb-6">
-      <div class="flex items-center space-x-4">
-        <h1 class="text-2xl font-bold text-white">
-          {{ currentBoard?.title || "Board" }}
-        </h1>
+      <h1 class="text-2xl font-bold text-white">
+        {{ currentBoard?.title || "Loading..." }}
+      </h1>
+      <div class="flex space-x-4">
+        <el-button type="primary" @click="handleShare">
+          <el-icon><Share /></el-icon>
+          Share
+        </el-button>
+        <el-button type="primary" @click="handleAddList">
+          <el-icon><Plus /></el-icon>
+          Add List
+        </el-button>
       </div>
     </div>
 
-    <!-- Board Content -->
-    <div
+    <!-- Lists Container -->
+    <Draggable
+      v-model="lists"
       class="flex space-x-4 overflow-x-auto pb-4"
-      style="min-height: calc(100vh - 200px)"
+      group="lists"
+      @change="handleListDragChange"
+      item-key="listId"
     >
-      <Draggable
-        v-model="lists"
-        group="lists"
-        item-key="listId"
-        class="flex space-x-4"
-        @change="handleListDragChange"
-      >
-        <template #item="{ element: list }">
+      <template #item="{ element: list }">
+        <div class="flex-shrink-0 w-72 bg-gray-100 rounded-lg">
+          <!-- List Header -->
           <div
-            class="w-72 flex-shrink-0 bg-white bg-opacity-90 rounded-lg shadow"
+            class="p-3 flex items-center justify-between bg-gray-200 rounded-t-lg"
           >
-            <!-- List Header -->
-            <div
-              class="flex items-center justify-between p-3 border-b border-gray-200"
-            >
-              <h3 class="font-semibold text-gray-700">{{ list.title }}</h3>
+            <h3 class="font-semibold">{{ list.title }}</h3>
+            <div class="flex items-center space-x-2">
+              <el-button
+                type="primary"
+                size="small"
+                @click="handleAddTask(list.listId)"
+              >
+                <el-icon><Plus /></el-icon>
+              </el-button>
               <el-dropdown trigger="click">
-                <button class="text-gray-500 hover:text-gray-700">
+                <el-button type="primary" size="small">
                   <el-icon><More /></el-icon>
-                </button>
+                </el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="handleEditList(list)"
-                      >Edit</el-dropdown-item
-                    >
-                    <el-dropdown-item
-                      @click="handleDeleteList(list.listId)"
-                      class="text-red-500"
-                    >
-                      Delete
+                    <el-dropdown-item @click="handleEditList(list)">
+                      Edit List
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="handleDeleteList(list.listId)">
+                      Delete List
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
             </div>
-
-            <!-- Tasks Container -->
-            <div class="p-2">
-              <Draggable
-                v-model="list.tasks"
-                group="tasks"
-                item-key="taskId"
-                class="space-y-2 min-h-[8px]"
-                @change="(event) => handleTaskDragChange(event, list.listId)"
-              >
-                <template #item="{ element: task }">
-                  <div
-                    class="bg-white rounded shadow-sm p-3 cursor-pointer hover:bg-gray-50 border border-gray-200"
-                    @click="handleEditTask(task)"
-                  >
-                    <p class="text-sm text-gray-700">{{ task.title }}</p>
-                    <p
-                      v-if="task.description"
-                      class="text-xs text-gray-500 mt-1"
-                    >
-                      {{ task.description }}
-                    </p>
-                  </div>
-                </template>
-              </Draggable>
-
-              <!-- Add Task Button -->
-              <button
-                class="w-full mt-2 p-2 text-left text-gray-600 hover:bg-gray-100 rounded transition-colors"
-                @click="handleAddTask(list.listId)"
-              >
-                <div class="flex items-center space-x-2">
-                  <el-icon><Plus /></el-icon>
-                  <span>Add a card</span>
-                </div>
-              </button>
-            </div>
           </div>
-        </template>
-      </Draggable>
 
-      <!-- Add List Button -->
-      <div class="w-72 flex-shrink-0">
-        <button
-          class="w-full p-3 text-left bg-white bg-opacity-30 hover:bg-opacity-40 text-white rounded-lg transition-colors"
-          @click="handleAddList"
-        >
-          <div class="flex items-center space-x-2">
-            <el-icon><Plus /></el-icon>
-            <span>Add another list</span>
+          <!-- Tasks Container -->
+          <div class="p-2">
+            <Draggable
+              v-model="list.tasks"
+              class="space-y-2 min-h-[10px]"
+              :group="{ name: 'tasks', pull: true, put: true }"
+              @change="(event) => handleTaskDragChange(event, list.listId)"
+              item-key="taskId"
+            >
+              <template #item="{ element: task }">
+                <el-card
+                  shadow="hover"
+                  class="cursor-pointer"
+                  @click="handleEditTask(task)"
+                >
+                  <h4 class="font-medium">{{ task.title }}</h4>
+                  <p v-if="task.description" class="text-sm text-gray-600 mt-2">
+                    {{ task.description }}
+                  </p>
+                </el-card>
+              </template>
+            </Draggable>
           </div>
-        </button>
-      </div>
-    </div>
+        </div>
+      </template>
+    </Draggable>
 
-    <!-- Add/Edit List Dialog -->
+    <!-- List Dialog -->
     <el-dialog
       v-model="listDialog.visible"
       :title="listDialog.isEdit ? 'Edit List' : 'Add List'"
       width="30%"
-      class="rounded-lg"
     >
       <el-form @submit.prevent="handleListSubmit">
         <el-form-item label="Title">
-          <el-input v-model="listDialog.title" placeholder="Enter list title" />
+          <el-input v-model="listDialog.title" />
         </el-form-item>
-        <div class="flex justify-end space-x-2">
-          <el-button @click="listDialog.visible = false">Cancel</el-button>
-          <el-button type="primary" @click="handleListSubmit">
-            {{ listDialog.isEdit ? "Update" : "Create" }}
-          </el-button>
-        </div>
       </el-form>
+      <template #footer>
+        <el-button @click="listDialog.visible = false">Cancel</el-button>
+        <el-button type="primary" @click="handleListSubmit">Save</el-button>
+      </template>
     </el-dialog>
 
-    <!-- Add/Edit Task Dialog -->
+    <!-- Task Dialog -->
     <el-dialog
       v-model="taskDialog.visible"
       :title="taskDialog.isEdit ? 'Edit Task' : 'Add Task'"
       width="30%"
-      class="rounded-lg"
     >
       <el-form @submit.prevent="handleTaskSubmit">
         <el-form-item label="Title">
-          <el-input v-model="taskDialog.title" placeholder="Enter task title" />
+          <el-input v-model="taskDialog.title" />
         </el-form-item>
         <el-form-item label="Description">
-          <el-input
-            v-model="taskDialog.description"
-            type="textarea"
-            placeholder="Enter task description"
-          />
+          <el-input v-model="taskDialog.description" type="textarea" rows="3" />
         </el-form-item>
-        <div class="flex justify-end space-x-2">
-          <el-button @click="taskDialog.visible = false">Cancel</el-button>
-          <el-button type="primary" @click="handleTaskSubmit">
-            {{ taskDialog.isEdit ? "Update" : "Create" }}
-          </el-button>
-        </div>
       </el-form>
+      <template #footer>
+        <el-button @click="taskDialog.visible = false">Cancel</el-button>
+        <el-button type="primary" @click="handleTaskSubmit">Save</el-button>
+      </template>
     </el-dialog>
   </div>
 </template>
