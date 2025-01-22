@@ -1,17 +1,26 @@
-import HomeView from "../views/HomeView.vue";
+import DashboardView from "@/views/DashboardView.vue";
 import { createRouter, createWebHistory } from "vue-router";
-import { useAuthStore } from "../stores/auth.store.ts";
-import LoginView from "../views/LoginView.vue";
-import RegisterView from "../views/RegisterView.vue";
+import { useAuthStore } from "@/stores/auth.store.ts";
+import LoginView from "@/views/LoginView.vue";
+import RegisterView from "@/views/RegisterView.vue";
+import BoardView from "@/views/BoardView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      path: "/",
-      name: "home",
-      component: HomeView,
+      path: "/dashboard",
+      name: "dashboard",
+      component: DashboardView,
       meta: { requiresAuth: true },
+      children: [
+        {
+          path: "board",
+          name: "board",
+          component: BoardView,
+          meta: { requiresAuth: true },
+        },
+      ],
     },
     {
       path: "/login",

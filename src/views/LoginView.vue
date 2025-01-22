@@ -96,7 +96,7 @@ const handleSubmit = async () => {
       ElMessage.success('Login successful')
     }
     
-    router.push('/')
+    router.push('/dashboard')
   } catch (error: any) {
     ElMessage.error(error.response?.data || 'An error occurred')
   } finally {
