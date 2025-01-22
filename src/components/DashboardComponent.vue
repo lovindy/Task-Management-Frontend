@@ -1,11 +1,11 @@
-<!-- src/components/DashboardComponent.vue -->
 <template>
-  <div class="h-full">
+  <div class="min-h-screen bg-gradient-to-br from-blue-500 to-blue-400 p-6">
     <!-- Board Header -->
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center space-x-4">
-        <h1 class="text-2xl font-bold">{{ currentBoard?.title || "Board" }}</h1>
-        <div class="flex items-center space-x-2"></div>
+        <h1 class="text-2xl font-bold text-white">
+          {{ currentBoard?.title || "Board" }}
+        </h1>
       </div>
     </div>
 
@@ -22,14 +22,18 @@
         @change="handleListDragChange"
       >
         <template #item="{ element: list }">
-          <div class="w-72 flex-shrink-0 bg-gray-100 rounded-lg p-4">
+          <div
+            class="w-72 flex-shrink-0 bg-white bg-opacity-90 rounded-lg shadow"
+          >
             <!-- List Header -->
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="font-semibold">{{ list.title }}</h3>
+            <div
+              class="flex items-center justify-between p-3 border-b border-gray-200"
+            >
+              <h3 class="font-semibold text-gray-700">{{ list.title }}</h3>
               <el-dropdown trigger="click">
-                <el-button type="text">
+                <button class="text-gray-500 hover:text-gray-700">
                   <el-icon><More /></el-icon>
-                </el-button>
+                </button>
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item @click="handleEditList(list)"
@@ -38,44 +42,49 @@
                     <el-dropdown-item
                       @click="handleDeleteList(list.listId)"
                       class="text-red-500"
-                      >Delete</el-dropdown-item
                     >
+                      Delete
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
             </div>
 
-            <!-- Tasks -->
-            <Draggable
-              v-model="list.tasks"
-              group="tasks"
-              item-key="taskId"
-              class="space-y-2"
-              @change="(event) => handleTaskDragChange(event, list.listId)"
-            >
-              <template #item="{ element: task }">
-                <div
-                  class="bg-white rounded p-3 shadow-sm cursor-pointer hover:bg-gray-50"
-                  @click="handleEditTask(task)"
-                >
-                  <p class="text-sm">{{ task.title }}</p>
-                  <p v-if="task.description" class="text-xs text-gray-500 mt-1">
-                    {{ task.description }}
-                  </p>
-                </div>
-              </template>
-            </Draggable>
+            <!-- Tasks Container -->
+            <div class="p-2">
+              <Draggable
+                v-model="list.tasks"
+                group="tasks"
+                item-key="taskId"
+                class="space-y-2 min-h-[8px]"
+                @change="(event) => handleTaskDragChange(event, list.listId)"
+              >
+                <template #item="{ element: task }">
+                  <div
+                    class="bg-white rounded shadow-sm p-3 cursor-pointer hover:bg-gray-50 border border-gray-200"
+                    @click="handleEditTask(task)"
+                  >
+                    <p class="text-sm text-gray-700">{{ task.title }}</p>
+                    <p
+                      v-if="task.description"
+                      class="text-xs text-gray-500 mt-1"
+                    >
+                      {{ task.description }}
+                    </p>
+                  </div>
+                </template>
+              </Draggable>
 
-            <!-- Add Task Button -->
-            <div class="mt-3">
-              <el-button
-                type="text"
-                class="w-full text-left hover:bg-gray-200"
+              <!-- Add Task Button -->
+              <button
+                class="w-full mt-2 p-2 text-left text-gray-600 hover:bg-gray-100 rounded transition-colors"
                 @click="handleAddTask(list.listId)"
               >
-                <el-icon><Plus /></el-icon>
-                Add a card
-              </el-button>
+                <div class="flex items-center space-x-2">
+                  <el-icon><Plus /></el-icon>
+                  <span>Add a card</span>
+                </div>
+              </button>
             </div>
           </div>
         </template>
@@ -83,29 +92,30 @@
 
       <!-- Add List Button -->
       <div class="w-72 flex-shrink-0">
-        <el-button
-          type="text"
-          class="w-full h-12 text-left bg-gray-100 hover:bg-gray-200 rounded-lg"
+        <button
+          class="w-full p-3 text-left bg-white bg-opacity-30 hover:bg-opacity-40 text-white rounded-lg transition-colors"
           @click="handleAddList"
         >
-          <el-icon><Plus /></el-icon>
-          Add another list
-        </el-button>
+          <div class="flex items-center space-x-2">
+            <el-icon><Plus /></el-icon>
+            <span>Add another list</span>
+          </div>
+        </button>
       </div>
     </div>
 
-    <!-- Dialogs remain the same -->
     <!-- Add/Edit List Dialog -->
     <el-dialog
       v-model="listDialog.visible"
       :title="listDialog.isEdit ? 'Edit List' : 'Add List'"
       width="30%"
+      class="rounded-lg"
     >
       <el-form @submit.prevent="handleListSubmit">
         <el-form-item label="Title">
           <el-input v-model="listDialog.title" placeholder="Enter list title" />
         </el-form-item>
-        <div class="flex justify-end">
+        <div class="flex justify-end space-x-2">
           <el-button @click="listDialog.visible = false">Cancel</el-button>
           <el-button type="primary" @click="handleListSubmit">
             {{ listDialog.isEdit ? "Update" : "Create" }}
@@ -119,6 +129,7 @@
       v-model="taskDialog.visible"
       :title="taskDialog.isEdit ? 'Edit Task' : 'Add Task'"
       width="30%"
+      class="rounded-lg"
     >
       <el-form @submit.prevent="handleTaskSubmit">
         <el-form-item label="Title">
@@ -131,7 +142,7 @@
             placeholder="Enter task description"
           />
         </el-form-item>
-        <div class="flex justify-end">
+        <div class="flex justify-end space-x-2">
           <el-button @click="taskDialog.visible = false">Cancel</el-button>
           <el-button type="primary" @click="handleTaskSubmit">
             {{ taskDialog.isEdit ? "Update" : "Create" }}
@@ -365,7 +376,39 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+:deep(.el-dialog) {
+  border-radius: 8px;
+}
+
+:deep(.el-dialog__header) {
+  margin-right: 0;
+  padding: 20px 20px 10px;
+}
+
 :deep(.el-dialog__body) {
-  padding-top: 20px;
+  padding: 20px;
+}
+
+:deep(.el-dialog__footer) {
+  padding: 10px 20px 20px;
+}
+
+/* Custom scrollbar for the board container */
+.overflow-x-auto {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
+}
+
+.overflow-x-auto::-webkit-scrollbar {
+  height: 8px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
 }
 </style>
