@@ -7,5 +7,5 @@
 
 <script setup lang="ts">
 import Dashboard from "@/components/Dashboard.vue";
-import AppLayout from "@/components/AppLayout.vue";
+import AppLayout from "@/layouts/AppLayout.vue";
 </script>

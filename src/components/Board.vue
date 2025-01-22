@@ -1,4 +1,4 @@
-<!-- src/views/Board.vue -->
+<!-- src/components/Board.vue -->
 <template>
   <div class="min-h-screen bg-blue-50">
     <!-- Top Navigation -->
