@@ -11,7 +11,9 @@
           <el-avatar :size="32" class="bg-teal-500">{{
             userInitials
           }}</el-avatar>
-          <span class="font-semibold text-sm">{{ user?.username }}</span>
+          <span class="font-semibold text-sm text-white">{{
+            user?.username
+          }}</span>
         </div>
       </div>
 
@@ -61,7 +63,7 @@
       <!-- Bottom Actions -->
       <div class="p-4 border-t border-blue-600">
         <el-dropdown trigger="click" class="w-full">
-          <el-button type="text" class="w-full text-black">
+          <el-button type="text" class="w-full text-white">
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-2">
                 <el-icon><Setting /></el-icon>
@@ -289,11 +291,11 @@ onMounted(async () => {
 }
 
 :deep(.el-sub-menu__title) {
-  color: black !important;
+  color: white !important;
 }
 
 :deep(.el-menu-item) {
-  color: black !important;
+  color: white !important;
 }
 
 :deep(.el-menu-item.is-active) {

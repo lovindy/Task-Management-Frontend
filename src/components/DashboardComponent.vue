@@ -6,10 +6,6 @@
         {{ currentBoard?.title || "Loading..." }}
       </h1>
       <div class="flex space-x-4">
-        <el-button type="primary" @click="handleShare">
-          <el-icon><Share /></el-icon>
-          Share
-        </el-button>
         <el-button type="primary" @click="handleAddList">
           <el-icon><Plus /></el-icon>
           Add List
