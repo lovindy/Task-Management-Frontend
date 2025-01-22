@@ -21,7 +21,9 @@ export const useListStore = defineStore("list", {
     },
 
     async updateListTitle(listId: string, newTitle: string) {
-      await api.put(`/list/${listId}/title`, newTitle);
+      await api.put(`/list/${listId}/title`, {
+        title: newTitle,
+      });
     },
 
     async deleteList(listId: string) {
