@@ -6,15 +6,30 @@
       class="bg-blue-700 text-black flex flex-col h-screen overflow-hidden"
     >
       <!-- Workspace Header -->
-      <div class="p-4 border-b border-blue-600">
-        <div class="flex items-center space-x-3 mb-2">
-          <el-avatar :size="32" class="bg-teal-500">{{
-            userInitials
-          }}</el-avatar>
-          <span class="font-semibold text-sm text-white">{{
-            user?.username
-          }}</span>
+      <div
+        class="p-4 border-b border-blue-600 flex items-center justify-between"
+      >
+        <div class="flex items-center space-x-3">
+          <el-avatar :size="32" class="bg-teal-500">
+            {{ userInitials }}
+          </el-avatar>
+          <span class="font-semibold text-sm text-white">
+            {{ user?.username }}
+          </span>
         </div>
+
+        <!-- Home/Dashboard Button -->
+        <el-tooltip content="Go to Dashboard" placement="bottom">
+          <el-button
+            type="primary"
+            size="small"
+            circle
+            @click="navigateToDashboard"
+            class="bg-blue-500 hover:bg-blue-600"
+          >
+            <el-icon><HomeFilled /></el-icon>
+          </el-button>
+        </el-tooltip>
       </div>
 
       <!-- Navigation Menu -->
@@ -95,6 +110,51 @@
 
     <!-- Main Content Area -->
     <el-container class="bg-gray-100">
+      <el-header
+        class="bg-white shadow-sm h-16 flex items-center justify-between px-6"
+      >
+        <div class="flex items-center space-x-4">
+          <!-- <el-button
+            @click="navigateToDashboard"
+            type="text"
+            class="text-gray-600 hover:text-blue-500"
+          >
+            <el-icon><Back /></el-icon>
+            <span class="ml-2">Back</span>
+          </el-button> -->
+          <h2 class="text-xl font-semibold text-gray-800">
+            {{ pageTitle }}
+          </h2>
+        </div>
+        <div class="flex items-center space-x-4">
+          <el-tooltip content="Notifications" placement="bottom">
+            <el-badge :value="12" class="item">
+              <el-button type="text" class="text-gray-600">
+                <el-icon><Bell /></el-icon>
+              </el-button>
+            </el-badge>
+          </el-tooltip>
+          <el-tooltip content="Quick Actions" placement="bottom">
+            <el-dropdown trigger="click">
+              <el-button type="text" class="text-gray-600">
+                <el-icon><Grid /></el-icon>
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item icon="Plus">Create New</el-dropdown-item>
+                  <el-dropdown-item icon="Document"
+                    >Recent Files</el-dropdown-item
+                  >
+                  <el-dropdown-item icon="Setting"
+                    >Preferences</el-dropdown-item
+                  >
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </el-tooltip>
+        </div>
+      </el-header>
+
       <el-main class="p-6">
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
@@ -104,7 +164,7 @@
       </el-main>
     </el-container>
 
-    <!-- Create Board Modal - Moved outside of submenu -->
+    <!-- Create Board Modal -->
     <el-dialog
       v-model="createBoardModal"
       title="Create New Board"
@@ -162,6 +222,10 @@ import {
   User,
   SwitchButton,
   ArrowDown,
+  HomeFilled,
+  Back,
+  Bell,
+  Grid,
 } from "@element-plus/icons-vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { useBoardStore } from "@/stores/board.store";
@@ -206,7 +270,24 @@ const userInitials = computed(() => {
 });
 const activeMenu = computed(() => route.path);
 
+// New computed property for page title
+const pageTitle = computed(() => {
+  // Map route paths to readable titles
+  const titleMap: { [key: string]: string } = {
+    "/": "Dashboard",
+    "/boards": "My Boards",
+    "/profile": "Profile",
+    "/settings": "Settings",
+  };
+
+  return titleMap[route.path] || route.meta.title || "Workspace";
+});
+
 // Methods
+const navigateToDashboard = () => {
+  router.push("/");
+};
+
 const navigateTo = (path: string) => {
   router.push(path);
 };
