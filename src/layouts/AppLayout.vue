@@ -46,7 +46,7 @@
               <div class="flex justify-between items-center w-full pr-4">
                 <span>Your Boards</span>
                 <el-button
-                  type="text"
+                  link
                   class="text-black p-1 hover:bg-blue-600"
                   @click.stop="openCreateBoardModal"
                 >
@@ -78,7 +78,7 @@
       <!-- Bottom Actions -->
       <div class="p-4 border-t border-blue-600">
         <el-dropdown trigger="click" class="w-full">
-          <el-button type="text" class="w-full text-white">
+          <el-button link class="w-full text-white">
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-2">
                 <el-icon><Setting /></el-icon>
@@ -116,7 +116,7 @@
         <div class="flex items-center space-x-4">
           <!-- <el-button
             @click="navigateToDashboard"
-            type="text"
+            link
             class="text-gray-600 hover:text-blue-500"
           >
             <el-icon><Back /></el-icon>
@@ -129,14 +129,14 @@
         <div class="flex items-center space-x-4">
           <el-tooltip content="Notifications" placement="bottom">
             <el-badge :value="12" class="item">
-              <el-button type="text" class="text-gray-600">
+              <el-button link class="text-gray-600">
                 <el-icon><Bell /></el-icon>
               </el-button>
             </el-badge>
           </el-tooltip>
           <el-tooltip content="Quick Actions" placement="bottom">
             <el-dropdown trigger="click">
-              <el-button type="text" class="text-gray-600">
+              <el-button link class="text-gray-600">
                 <el-icon><Grid /></el-icon>
               </el-button>
               <template #dropdown>
