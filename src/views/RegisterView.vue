@@ -10,7 +10,7 @@
         class="hidden md:flex md:w-1/2 bg-blue-50 p-8 items-center justify-center"
       >
         <img
-          src="@/assets/undraw_to-the-moon_crmw.svg"
+          src="@/assets/undraw_security-on_btwg.svg"
           alt="Register Illustration"
           class="max-w-full h-auto object-contain"
         />
