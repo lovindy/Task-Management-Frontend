@@ -261,7 +261,7 @@ const userInitials = computed(() => {
 });
 const activeMenu = computed(() => route.path);
 
-// New computed property for page title
+// Computed property for page title
 const pageTitle = computed(() => {
   // Map route paths to readable titles
   const titleMap: { [key: string]: string } = {
