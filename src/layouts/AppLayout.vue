@@ -81,10 +81,9 @@
           <el-button link class="w-full text-white">
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-2">
-                <el-icon><Setting /></el-icon>
-                <span>Settings</span>
+                <el-icon class="text-white"><Setting /></el-icon>
+                <span class="text-white">Settings</span>
               </div>
-              <el-icon><ArrowDown /></el-icon>
             </div>
           </el-button>
           <template #dropdown>
@@ -114,14 +113,6 @@
         class="bg-white shadow-sm h-16 flex items-center justify-between px-6"
       >
         <div class="flex items-center space-x-4">
-          <!-- <el-button
-            @click="navigateToDashboard"
-            link
-            class="text-gray-600 hover:text-blue-500"
-          >
-            <el-icon><Back /></el-icon>
-            <span class="ml-2">Back</span>
-          </el-button> -->
           <h2 class="text-xl font-semibold text-gray-800">
             {{ pageTitle }}
           </h2>
